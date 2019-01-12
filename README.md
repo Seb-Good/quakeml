@@ -1,7 +1,7 @@
 # QuakeML
 Can you predict a laboratory earthquake?
 
-## Data
+## Dataset
 Download the LANL Earthquake Prediction dataset (all.zip) from [Kaggle](https://www.kaggle.com/c/LANL-Earthquake-Prediction/data)
 and place in the directory ```/data/raw/```.
 ```
