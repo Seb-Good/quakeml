@@ -13,7 +13,7 @@ and place in the directory ```/data/raw/```.
 │   ├── training
 ├── quakeml
 ├── README
-.getignore
+.gitignore
 LICENSE.txt
 README.md
 requirements.txt
