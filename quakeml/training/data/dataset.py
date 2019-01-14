@@ -10,6 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 # 3rd party imports
 import os
+import json
 import shutil
 import zipfile
 import numpy as np
@@ -65,7 +66,7 @@ class Dataset(object):
         file_names = os.listdir(os.path.join(self.processed_path, 'test'))
 
         # Move test files to training folder
-        _ = Parallel(n_jobs=-1)(delayed(self._csv_to_npy)(file_name) for file_name in file_names[0:10])
+        _ = Parallel(n_jobs=-1)(delayed(self._csv_to_npy)(file_name) for file_name in file_names)
 
         # Remove test directory
         shutil.rmtree(os.path.join(self.processed_path, 'test'))
@@ -132,11 +133,32 @@ class Dataset(object):
 
     def _save_loading_cycles(self, acoustic_data, time_to_failure, cycle_intervals):
         """Save loading cycles as npy files."""
+        # Dictionary for meta data
+        meta_data = dict()
+        meta_data['intervals'] = dict()
+        meta_data['num_intervals'] = len(cycle_intervals)
+
         # Loop through intervals
         for idx, interval in enumerate(cycle_intervals):
 
+            # File names
+            acoustic_data_name = 'acoustic_data_cycle_{}.npy'.format(idx + 1)
+            time_to_failure_name = 'time_to_failure_cycle_{}.npy'.format(idx + 1)
+
             # Save to training test folder as npy file
-            np.save(os.path.join(self.processed_path, 'acoustic_data_cycle_{}.npy'.format(idx + 1)),
-                    acoustic_data[interval[0]:interval[1]])
-            np.save(os.path.join(self.processed_path, 'time_to_failure_cycle_{}.npy'.format(idx + 1)),
-                    time_to_failure[interval[0]:interval[1]])
+            np.save(os.path.join(self.processed_path, acoustic_data_name), acoustic_data[interval[0]:interval[1]])
+            np.save(os.path.join(self.processed_path, time_to_failure_name), time_to_failure[interval[0]:interval[1]])
+
+            # Add interval information
+            meta_data['intervals'][str(idx + 1)] = dict()
+            meta_data['intervals'][str(idx + 1)]['interval'] = interval
+            meta_data['intervals'][str(idx + 1)]['acoustic_data'] = acoustic_data_name
+            meta_data['intervals'][str(idx + 1)]['time_to_failure'] = time_to_failure_name
+
+        # Save meta data
+        with open(os.path.join(self.processed_path, 'meta_data.json'), 'w') as file:
+            json.dump(meta_data, file, sort_keys=True)
+
+    def _save_meta_data(self, cycle_intervals):
+        """Save a JSON file containing information about the saved loading cycles."""
+        pass
