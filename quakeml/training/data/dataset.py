@@ -135,8 +135,8 @@ class Dataset(object):
         """Save loading cycles as npy files."""
         # Dictionary for meta data
         meta_data = dict()
-        meta_data['intervals'] = dict()
-        meta_data['num_intervals'] = len(cycle_intervals)
+        meta_data['cycles'] = dict()
+        meta_data['num_cycles'] = len(cycle_intervals)
 
         # Loop through intervals
         for idx, interval in enumerate(cycle_intervals):
@@ -150,10 +150,10 @@ class Dataset(object):
             np.save(os.path.join(self.processed_path, time_to_failure_name), time_to_failure[interval[0]:interval[1]])
 
             # Add interval information
-            meta_data['intervals'][str(idx + 1)] = dict()
-            meta_data['intervals'][str(idx + 1)]['interval'] = interval
-            meta_data['intervals'][str(idx + 1)]['acoustic_data'] = acoustic_data_name
-            meta_data['intervals'][str(idx + 1)]['time_to_failure'] = time_to_failure_name
+            meta_data['cycles'][str(idx + 1)] = dict()
+            meta_data['cycles'][str(idx + 1)]['interval'] = interval
+            meta_data['cycles'][str(idx + 1)]['acoustic_data'] = acoustic_data_name
+            meta_data['cycles'][str(idx + 1)]['time_to_failure'] = time_to_failure_name
 
         # Save meta data
         with open(os.path.join(self.processed_path, 'meta_data.json'), 'w') as file:
